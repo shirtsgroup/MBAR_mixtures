@@ -269,32 +269,45 @@ where $N$ is the number of samples collected.
 We can divide and multiply by $p_j(\vec{x})$ to find that:
 \[ \langle O \rangle_{i} = \int_{\Gamma} O(\vec{x}) \left(\frac{p_i(\vec{x})}{p_j(\vec{x})}\right) p_j(\vec{x}) d\vec{x}\]
 
-Note that to do this, we assumed that $p_j(\vec{x})$ is nonzero in any
-finite volume interest in $p_i(\vec{x})$. This assumption can be quite
-important in a number of situations. If one tries to apply importance
-sampling, say, hard spheres with different radii, it won't work, as in
-the distribution $p_i(\vec{x})$ (with smaller spheres), there are some
-configurations that are disallowed in a distribution $p_j(\vec{x})$
-with bigger spheres, with probability 0, so the ratio
-$p_i(\vec{x})/p_j(\vec{x})$ is undefined for many $\vec{x}$.  If
-$p_j(\vec{x})$ is {\em almost} zero where $p_i(\vec{x})$ has
-substantial probability density, then the integrals will eventually
-converge, but it will take a very large number of samples. An example
-of this is in the insertion of a Lennard-Jones sphere in a dense
-fluid, with $p_j(\vec{x})$ the distribution with a zeroed potential
-and $p_i(\vec{x})$ is the distribution with the potential present.
-Only exactly at the center of the sphere is $p_j(\vec{x})=0$, but it
-is very nearly zero for a substantial volume near the center of the
-sphere, meaning the insertion is very inefficient.  A number of
-alternative techniques have been developed (such as soft core
-approaches and staged insertion) to improve the convergence of
-integrals in this situation.
-
-If we can generate samples from the normalized distribution $p_j(\vec{x})$,
-then we have:
+Given a well-behaved $p_j(\vec{x})$, if we can generate samples from
+the normalized distribution $p_j(\vec{x})$, then we have:
 \[ \langle O \rangle_{i} = \frac{1}{N} \sum_{n=1}^N O(\vec{x}_n) \left(\frac{p_i(\vec{x}_n)}{p_j(\vec{x}_n)}\right) \] 
 This equation gives us expectations in state $i$, but with samples
-from state $j$.
+from state $j$. 
+
+Note that to do this, we assumed that $p_j(\vec{x})$ is nonzero in any
+finite volume of interest in $p_i(\vec{x})$. In most cases, this will
+not be relevant, because if $p_j(\vec{x})=0$, we will not collect
+samples from it anyway, so it doesn't matter that the ratio is
+undefined, and because with standard pair potentials (Coulomb's law,
+Lennard-Jones, etc.), $p_j(\vec{x})=0$ is only true at single points
+with zero total volume.  There are some complications with hard
+spheres with changing radii, but we will not explore the issues there
+at this time.
+
+%This assumption can be
+%quite important in a number of situations. If one tries to apply
+%importance sampling, say, hard spheres with different radii, it won't
+%work, as in the distribution $p_i(\vec{x})$ (with smaller spheres),
+%there are some configurations that are disallowed (i.e. have
+%probability 0) in a distribution $p_j(\vec{x})$ with bigger spheres,
+%so the ratio $p_i(\vec{x})/p_j(\vec{x})$ is undefined for many
+%$\vec{x}$.  
+If $p_j(\vec{x})$ is {\em almost} zero where
+$p_i(\vec{x})$ has substantial probability density, then the integrals
+will eventually converge, but it will take a very large number of
+samples. An example of this latter case is in the insertion of a
+Lennard-Jones sphere in a dense fluid, with $p_j(\vec{x})$ the
+distribution with a zero potential and $p_i(\vec{x})$ is the
+distribution with the Lennard-Jones potential present.  Only with
+configurations with other fluid particles at the exact center of the
+Lennard-Jones sphere is $p_j(\vec{x})=0$, but it is very nearly zero
+for a substantial number of configurations with fluid particles near
+the center of the sphere, resulting in an insertion is very
+inefficient.  A number of alternative techniques have been developed
+(such as soft core approaches and staged insertion) to improve the
+convergence of integrals in this situation.
+
 
 If we know our distributions $p_i(\vec{x})$ and $p_j(\vec{x})$ only up
 to unknown constants $c_i$ and $c_j$, so that $p_i(\vec{x}) =
@@ -339,7 +352,7 @@ $K$ distributions.  If each of the individual $p_k(\vec{x})$
 distributions is normalized, then it is easy to verify that the
 overall mixture distribution $p_m(\vec{x})$ must also normalized.
 
-\subsection{A visual example}
+\subsection*{A visual example}
 
 Let's look at a visual example of how one constructs this mixture
 distribution (Fig.~\ref{figure:mixture}).  Let's say we have a
@@ -457,3 +470,4 @@ mean.
 % LocalWords:  PRL Multistate multistate MBAR Souaille Roux NVT VT semigrand Eq
 % LocalWords:  multicanonical dimensionalized Zwanzig reweight reweighted Geyer
 % LocalWords:  demystify mbarfordummies Tsallis nonnegligible geyer Lennard
+% LocalWords:  Coulomb's
