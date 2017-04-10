@@ -60,7 +60,7 @@
  \affiliation{Department of Chemical and Biological Engineering, University of Colorado Boulder, Boulder, CO 80309}
 
 \begin{abstract}The multistate Bennett Acceptance ratio is provably the
-  lowest variance unbiased estimators of both free energies and
+  lowest variance unbiased estimator of both free energies and
   ensemble averages, and has a number of important advantages over
   previous methods, such as WHAM. Despite its advantages, the original
   MBAR paper was rather dense and mathematically complicated, limiting
@@ -88,7 +88,7 @@ is provably the lowest variance unbiased estimators of both free
 energies and ensemble averages.  Additionally, it has a number of
 important advantages over previous methods.  Multiple
 histogram techniques, such as WHAM, rely on histograms of width
-sufficient to contain many samples, introducing a bias that can be
+sufficient to contain many samples, which introduces a bias that can be
 substantial and often difficult to
 assess~\cite{kobrak:j-comput-chem:2003:histogram-error}.
 Additionally, using multiple histogram techniques makes it very
@@ -259,7 +259,7 @@ to a normalized probability distribution $p_i(\vec{x})$ by integrating over the
 support of that distribution.
 \[ \langle O \rangle_{i} = \int_{\Gamma} O(\vec{x}) p_i(\vec{x}) d\vec{x}\]
 Where the subscript $i$ indicates that the average is with respect
-to the distribution $p_i(\vec{x})$, and $V$ is the phase space volume
+to the distribution $p_i(\vec{x})$, and $\Gamma$ is the phase space volume
 we integrate over. If we pick samples $\vec{x}$ proportional to their
 probability $p_i(\vec{x})$, then we can calculate the same averages by
 Monte Carlo integration.
@@ -269,15 +269,28 @@ where $N$ is the number of samples collected.
 We can divide and multiply by $p_j(\vec{x})$ to find that:
 \[ \langle O \rangle_{i} = \int_{\Gamma} O(\vec{x}) \left(\frac{p_i(\vec{x})}{p_j(\vec{x})}\right) p_j(\vec{x}) d\vec{x}\]
 
-Note that to do this, we assumed that that $p_j(x)$ is nonzero
-everywhere there we care about, which is rather important; if you try
-to apply importance sampling, say, hard spheres with different radii,
-it won't work, as in the distribution $p_i(x)$ (with smaller spheres),
-there are some configurations that are disallowed in a distribution
-$p_j(\vec{x})$ with bigger spheres, with probability 0, so the ratio
-$p_i(\vec{x})/p_j(\vec{x})$ is undefined for many $\vec{x}$.
+Note that to do this, we assumed that $p_j(\vec{x})$ is nonzero in any
+finite volume interest in $p_i(\vec{x})$. This assumption can be quite
+important in a number of situations. If one tries to apply importance
+sampling, say, hard spheres with different radii, it won't work, as in
+the distribution $p_i(\vec{x})$ (with smaller spheres), there are some
+configurations that are disallowed in a distribution $p_j(\vec{x})$
+with bigger spheres, with probability 0, so the ratio
+$p_i(\vec{x})/p_j(\vec{x})$ is undefined for many $\vec{x}$.  If
+$p_j(\vec{x})$ is {\em almost} zero where $p_i(\vec{x})$ has
+substantial probability density, then the integrals will eventually
+converge, but it will take a very large number of samples. An example
+of this is in the insertion of a Lennard-Jones sphere in a dense
+fluid, with $p_j(\vec{x})$ the distribution with a zeroed potential
+and $p_i(\vec{x})$ is the distribution with the potential present.
+Only exactly at the center of the sphere is $p_j(\vec{x})=0$, but it
+is very nearly zero for a substantial volume near the center of the
+sphere, meaning the insertion is very inefficient.  A number of
+alternative techniques have been developed (such as soft core
+approaches and staged insertion) to improve the convergence of
+integrals in this situation.
 
-If we can generate samples from the normalized distribution $p_j(x)$,
+If we can generate samples from the normalized distribution $p_j(\vec{x})$,
 then we have:
 \[ \langle O \rangle_{i} = \frac{1}{N} \sum_{n=1}^N O(\vec{x}_n) \left(\frac{p_i(\vec{x}_n)}{p_j(\vec{x}_n)}\right) \] 
 This equation gives us expectations in state $i$, but with samples
@@ -288,7 +301,7 @@ to unknown constants $c_i$ and $c_j$, so that $p_i(\vec{x}) =
 c_i^{-1}q_i(\vec{x})$, then it seems we are stuck; how can we deal
 with the unknown ratio $c_i/c_j$? We can introduce a trick; we choose
 for the observable $O(\vec{x})=1$, which yields (for samples collected
-from the unnormalized distribution $q_i(x)$):
+from the unnormalized distribution $q_i(\vec{x})$):
 
 \begin{eqnarray}
 \langle 1 \rangle_{p_i} &=& \frac{1}{N} \sum_{n=1}^{N} \left(1\right) \frac{c_j}{c_i} \left(\frac{q_i(\vec{x}_n)}{q_j(\vec{x}_n)}\right) \nonumber \\
@@ -311,7 +324,7 @@ each of $K$ different distributions $p_k(\vec{x}) = c_k^{-1}
 q_k(\vec{x})$. We construct a new probability distribution where we
 simply throw all $N = \sum_{i=1}^K N_k$ into the same pot. The
 probability of drawing a sample from this mixture of distributions is
-going to be simply;
+going to be simply
 \begin{equation}
 p_m(\vec{x}) = \frac{1}{N}\sum_{k=1}^K N_k p_k(\vec{x})
 \end{equation}
@@ -324,7 +337,7 @@ We call this entire set of samples, together, a {\em mixture
   distribution}, since it involves mixing together samples from all
 $K$ distributions.  If each of the individual $p_k(\vec{x})$
 distributions is normalized, then it is easy to verify that the
-overall mixture distribution $p_m(\vec{x})$ must also also normalized.
+overall mixture distribution $p_m(\vec{x})$ must also normalized.
 
 \subsection{A visual example}
 
@@ -367,7 +380,7 @@ If each of the individual distributions is normalized (i.e. we solve
 for $c_k$), then clearly the mixture distribution $p_m(\vec{x})$ must
 be normalized.  If we reweight from the mixture distribution to
 distribution $i$, defined by $p_i(\vec{x})$ and use the observable
-$O(x) = 1$ again, then we have:
+$O(\vec{x}) = 1$ again, then we have:
 \begin{eqnarray} 
   1  &=& \frac{1}{N} \sum_{n=1}^{N}\frac{1}{c_i} \left(\frac{q_i(\vec{x})}{p_m(\vec{x})}\right) \nonumber \\
      &=& \frac{1}{N} \sum_{n=1}^N\frac{c_i^{-1} q_i(\vec{x})}{N^{-1}\sum_k N_k c_k^{-1} q_k(\vec{x_n})} \nonumber \\
@@ -375,7 +388,7 @@ $O(x) = 1$ again, then we have:
 c_i  &=& \sum_{n=1}^N \frac{q_i(\vec{x}_n)}{\sum_k N_k c_k^{-1} q_k(\vec{x}_n)}
 \end{eqnarray}
 Where the last equation is simply an algebraic relationship.  There
-will be $K$ equations, one for each of the $K$ for each of the $K$
+will be $K$ equations, one for each of the $K$
 distributions.  We then have a system of $K$ equations that can be
 solved for the $c_k$.  Although there are $K$ equations, there are
 only $K-1$ independent equations. This can be seen by noting that the
@@ -426,7 +439,9 @@ probability for each individual sample is known.
 The idea of reweighting from a mixture distribution is not original to
 us; Geyer appears to be the first to introduced this idea in 1994 in
 the case of the mixture of two distributions~\citep{geyer:1994} in a
-technical report, which may explain why the idea never caught hold.
+technical report which did not really appear in published journal or
+conference literature; this may explain why the idea never caught
+hold, especially outside of the statistics community.
 
 Hopefully, this discussion helps demystify the MBAR equations for free
 energy, helps make it clearer where they come from, and what they
@@ -441,4 +456,4 @@ mean.
 
 % LocalWords:  PRL Multistate multistate MBAR Souaille Roux NVT VT semigrand Eq
 % LocalWords:  multicanonical dimensionalized Zwanzig reweight reweighted Geyer
-% LocalWords:  demystify mbarfordummies Tsallis nonnegligible geyer
+% LocalWords:  demystify mbarfordummies Tsallis nonnegligible geyer Lennard
