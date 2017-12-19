@@ -193,7 +193,7 @@ a unique solution, up to a multiplicative constant:
 \begin{eqnarray}
 \hat{c}_i = \sum_{n=1}^N \frac{ q_i(\x_n)}{\sum\limits_{k=1}^K N_k \, \hat{c}_k^{-1} \,\ q_k(\x_n)},
 \end{eqnarray}
-where $N = \sum_{k=1}^K K$. One can also construct an estimate of the
+where $N = \sum_{k=1}^K N_k$. One can also construct an estimate of the
 asymptotic error of the estimate of $c_i(x)$.~\citep{shirts-chodera:jcp:2008:mbar}
 
 In terms of free energies, this becomes.
@@ -209,7 +209,7 @@ can again be derived and are given in a previous
 paper~\cite{shirts-chodera:jcp:2008:mbar}. 
 
 For a free energy $f_i$ of a state from which no samples are collected,
-then we can use the same equation, but we note that the denominator is
+then we can use the same equation, but we note that the denominator
 does not contain that potential, so the free energy does not require
 any self-consistent iteration, but instead only requires running
 through once, using precomputed denominators.
@@ -232,7 +232,7 @@ about these expectations (more on that in a bit).
 
 We can write this ratio of integrals as:
 \begin{eqnarray}
-\langle O_i \rangle = \sum O_i(x_n) W_{in} 
+\langle O_i \rangle = \sum_n O_i(x_n) W_{in} 
 \end{eqnarray}
 where:
 \begin{eqnarray}
@@ -240,13 +240,15 @@ W_{ni} = \hat{c}_i^{-1} \, q_i(\x_n) / \sum\limits_{k=1}^K N_k \, \hat{c}_k^{-1}
 \end{eqnarray}
 Or, for the Boltzmann distribution:
 \begin{eqnarray}
-W_{ni} = \sum_{j=1}^K \sum_{n=1}^{N_j} \frac{\exp[\hat{f}_i-u_i(\x_{jn})]}{\sum\limits_{k=1}^K N_k \, \exp[\hat{f}_k - u_k(\x_{jn})]}
+W_{ni} = \frac{\exp[\hat{f}_i-u_i(\x_{n})]}{\sum\limits_{k=1}^K N_k \, \exp[\hat{f}_k - u_k(\x_{n})]}
 \end{eqnarray}
-Note that the sum is now indexed by a single index $n = 1,\ldots,N$,
-as, surprisingly, the association of which samples $\x_n$ came from
-which distribution $p_i(\x)$ does not enter into the calculation!  We
-could literally forget which state each sample came from, and get the
-same answer.  Why is this?
+
+Note that we are now indexing the weights by a single index $n =
+1,\ldots,N$, rather than a separate index for each state, as,
+surprisingly, the association of which samples $\x_n$ came from which
+distribution $p_i(\x)$ does not enter into the calculation!  We could
+literally forget which state each sample came from, and get the same
+answers.  Why is this?
 
 \section{MBAR as importance sampling from the mixture distribution}
 
@@ -263,7 +265,7 @@ to the distribution $p_i(\vec{x})$, and $\Gamma$ is the phase space volume
 we integrate over. If we pick samples $\vec{x}$ proportional to their
 probability $p_i(\vec{x})$, then we can calculate the same averages by
 Monte Carlo integration.
-\[ \langle O \rangle_{i} = \sum_{n=1}^{N} O(\vec{x}_n) \]
+\[ \langle O \rangle_{i} = \frac{1}{N}\sum_{n=1}^{N} O(\vec{x}_n) \]
 where $N$ is the number of samples collected.
 
 We can divide and multiply by $p_j(\vec{x})$ to find that:
@@ -317,19 +319,19 @@ for the observable $O(\vec{x})=1$, which yields (for samples collected
 from the unnormalized distribution $q_i(\vec{x})$):
 
 \begin{eqnarray}
-\langle 1 \rangle_{p_i} &=& \frac{1}{N} \sum_{n=1}^{N} \left(1\right) \frac{c_j}{c_i} \left(\frac{q_i(\vec{x}_n)}{q_j(\vec{x}_n)}\right) \nonumber \\
-        1  &=& \frac{1}{N} \sum_{n=1}^{N}\frac{c_j}{c_i} \left(\frac{q_i(\vec{x})}{q_j(\vec{x})}\right) \nonumber \\
+\langle 1 \rangle_{i} &=& \frac{1}{N} \sum_{n=1}^{N} \left(1\right) \frac{c_j}{c_i} \left(\frac{q_i(\vec{x}_n)}{q_j(\vec{x}_n)}\right) \nonumber \\
+        1  &=& \frac{1}{N} \sum_{n=1}^{N}\frac{c_j}{c_i} \left(\frac{q_i(\vec{x}_n)}{q_j(\vec{x}_n)}\right) \nonumber \\
        \frac{c_i}{c_j}  &=& \frac{1}{N} \sum_{n=1}^{N} \left(\frac{q_i(\vec{x}_n)}{q_j(\vec{x}_n)}\right)
 \end{eqnarray}
-Since the expectation of 1 is always 1, and 1=1 no matter what state
-we are in. In the case of Boltzmann (or Boltzmann-related)
-distribution, then $c_i = e^{-f_i}$, the generalized free energy, and
-$q_i(\vec{x}) = e^{-u_i(\vec{x})}$, which reduces to
+since the expectation of 1 is always 1, and 1=1 no matter what state
+we are in. In the case of Boltzmann-form distributions, then $c_i =
+e^{-f_i}$, the generalized free energy, and $q_i(\vec{x}) =
+e^{-u_i(\vec{x})}$, which reduces to
 \begin{eqnarray}
-f_j-f_i  &=& -\ln \frac{1}{N} \sum_{i=1}^N e^{-(u_j(\vec{x}_n)-u_i(\vec{x}_n)}  \nonumber \\
-            &=& -\ln \expect{ e^{-(u_j(\vec{x})-u_i(\vec{x}))}}_{i}
+f_j-f_i  &=& -\ln \frac{1}{N} \sum_{n=1}^N e^{-(u_i(\vec{x}_n)-u_j(\vec{x}_n))}  \nonumber \\
+            &=& -\ln \expect{ e^{-(u_i(\vec{x})-u_j(\vec{x}))}}_{j}
 \end{eqnarray}
-which is of course the standard one-state reweighting method for free
+where $\langle \rangle_j$ indicates ensemble average over the sampled distribution $j$, which is of course the standard one-state reweighting method for free
 energy calculations first introduced by Zwanzig.
 
 Now, here's the key step.  Assume we have collected $N_k$ samples from
@@ -421,11 +423,11 @@ We can also write this system of equations as:
 \end{equation*} 
 where: 
 \begin{eqnarray*}
-W_{in} = \frac{c_i^{-1} q_i(\vec{x}_n)}{\sum N_k c_k^{-1} q_k(\vec{x}_n)} 
+W_{in} = \frac{c_i^{-1} q_i(\vec{x}_n)}{\sum_k N_k c_k^{-1} q_k(\vec{x}_n)} 
 \end{eqnarray*}
 which is true for each $i$, but more simply can be seen as:
 \begin{eqnarray}
-W_{in} = \frac{p_i(\vec{x}_n)}{p_m(\vec{x}_n)}
+W_{in} = \frac{1}{N}\frac{p_i(\vec{x}_n)}{p_m(\vec{x}_n)}
 \end{eqnarray}
 And is simply an expression of the fact that the weights for any of
 the ensemble must be normalized.
@@ -433,10 +435,10 @@ the ensemble must be normalized.
 We can then calculate reweighted expectations of observables at any
 state from the mixture distribution, which can be written in a number of ways
 \begin{eqnarray}
-\langle O \rangle_i  &=& \sum_{i=1}^N O(\vec{x}_n) \frac{p_i(\vec{x}_n)}{p_m(\vec{x}_n)} \nonumber \\
-                     &=&  \frac{1}{N}\sum_{n=1}^N O(\vec{x}_n) \frac{c_i^{-1} q_i(\vec{x}_n)}{\sum N_k c_k^{-1} q_k(\vec{x}_n)} \nonumber \\ 
-                     &=&  \frac{1}{N}\sum_{n=1}^N O(\vec{x}_n) \frac{e^{f_i-u_i(\vec{x}_n)}}{\sum N_k e^{f_k - u_k(\vec{x}_n)}} \nonumber \\ 
-    &=& \frac{1}{N}\sum_{n=1}^N  O(\vec{x}_n) W_{in} 
+\langle O \rangle_i  &=& \frac{1}{N}\sum_{i=1}^N O(\vec{x}_n) \frac{p_i(\vec{x}_n)}{p_m(\vec{x}_n)} \nonumber \\
+                     &=& \sum_{n=1}^N O(\vec{x}_n) \frac{c_i^{-1} q_i(\vec{x}_n)}{\sum N_k c_k^{-1} q_k(\vec{x}_n)} \nonumber \\ 
+                     &=& \sum_{n=1}^N O(\vec{x}_n) \frac{e^{f_i-u_i(\vec{x}_n)}}{\sum N_k e^{f_k - u_k(\vec{x}_n)}} \nonumber \\ 
+    &=& \sum_{n=1}^N  O(\vec{x}_n) W_{in} 
 \end{eqnarray}
 which can be seen as reweighting (or importance sampling) to state $i$
 from the mixture distribution $p_m(\vec{x})$ This, again, is exactly
@@ -460,6 +462,12 @@ Hopefully, this discussion helps demystify the MBAR equations for free
 energy, helps make it clearer where they come from, and what they
 mean.
 
+\subsection*{Acknowledgments}
+
+Thanks for Ye Mei (East China Normal University), Tommy Foley (Penn
+State), and Yuanyuan Zhou (University of Michigan) for noting typos in
+previous versions of this document.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DISCUSSION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -469,5 +477,5 @@ mean.
 
 % LocalWords:  PRL Multistate multistate MBAR Souaille Roux NVT VT semigrand Eq
 % LocalWords:  multicanonical dimensionalized Zwanzig reweight reweighted Geyer
-% LocalWords:  demystify mbarfordummies Tsallis nonnegligible geyer Lennard
-% LocalWords:  Coulomb's
+% LocalWords:  demystify mbarfordummies Tsallis nonnegligible geyer Lennard Ye
+% LocalWords:  Coulomb's Mei Foley
